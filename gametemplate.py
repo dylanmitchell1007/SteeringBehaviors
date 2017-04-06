@@ -72,8 +72,8 @@ class GameTemplate(object):
 
     def _draw(self):
         '''need docstring'''
-        self.draw_text("FPS: {:6.6}{}PLAYTIME: {:6.6} SECONDS".format(
-            self._clock.get_fps(), " " * 5, self._playtime))
+       # self.draw_text("FPS: {:6.6}{}PLAYTIME: {:6.6} SECONDS".format(
+        #    self._clock.get_fps(), " " * 5, self._playtime))
 
         pygame.display.flip()
         self._screen.blit(self._background, (0, 0))

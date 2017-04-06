@@ -2,6 +2,7 @@ from MathLib import Vector2
 import steeringapp
 import gametemplate
 import math
+import pygame
 import random
 import os
 
@@ -14,6 +15,7 @@ class Agent(object):
         self.force = Vector2(0, 0)
         self._choice_ = None
         self.wanderangle = math.pi / 4.0
+        self.previousangle = math.pi / 4.0
 
     def seek(self, target):
         tmp = target.position - self.position
@@ -37,9 +39,13 @@ class Agent(object):
         center_circle = self.velocity.Normalize()
         center_circle = center_circle * distance
         dispacement = Vector2(0, 1) * radius
-        wanderangle = self.wanderangle + (random.random() * 1) - (1 * .5)
-        dispacement.VecX = math.cos(wanderangle) * dispacement.Magnitude()
-        dispacement.VecY = math.sin(wanderangle) * dispacement.Magnitude()
+        deltaangle = self.previousangle - self.wanderangle
+        newangle = (random.randrange(0.0, 1.0) * deltaangle) - (deltaangle * .5)
+        self.previousangle = newangle
+        self.wanderangle += newangle
+        
+        dispacement.VecX = math.cos(self.wanderangle) * dispacement.Magnitude()
+        dispacement.VecY = math.sin(self.wanderangle) * dispacement.Magnitude()
         os.system("cls")       
         print dispacement 
         return dispacement
@@ -55,7 +61,9 @@ class Agent(object):
             self.force = self.flee(target)
         
         if self._choice_ is 3:
-            self.force = self.wander(25, 10)
+            self.force = self.wander(500, 300)
+            
+            
         
         
         acceleration = self.force * (1 / 1)

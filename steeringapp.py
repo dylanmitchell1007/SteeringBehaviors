@@ -8,6 +8,7 @@ from gametemplate import GameTemplate
 
 
 class SteeringApp(GameTemplate):
+    
     '''need documentation'''
 
     def __init__(self, name):
@@ -32,8 +33,18 @@ class SteeringApp(GameTemplate):
 
     def draw(self):
         '''draw all gameobjects added to this game'''
+        self._background.fill((255, 255, 255))
+
         super(SteeringApp, self)._draw()
         for gameobject in self._gameobjects:
+            if gameobject._choice_ is 1:
+                super(SteeringApp, self).draw_text("s = Seek \n")
+
+            if gameobject._choice_ is 2:
+                super(SteeringApp, self).draw_text("F = Flee \n")
+
+            if gameobject._choice_ is 3:
+                super(SteeringApp, self).draw_text("w = Wander \n")
             pygame.draw.circle(self._screen, constants.BLACK, [int(gameobject.position.GetX()), int(gameobject.position.GetY())], 40)
     def run(self):
         '''need documentation'''
@@ -60,6 +71,8 @@ class SteeringApp(GameTemplate):
                             for gameobject in self._gameobjects:
                                 gameobject._choice_ = 0
                             print "S KEY PRESSED"
+                        if pygame.key.get_pressed()[pygame.K_SPACE]:
+                            self.addtobatch(Agent(Vector2(0,0), 100))
                 self.targetagent.position = Vector2(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                 self.draw()
         super(SteeringApp, self)._shutdown()
