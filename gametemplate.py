@@ -13,6 +13,7 @@ class GameTemplate(object):
         pygame.display.init()
         pygame.font.init()
         self._screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self._screenText = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self._clock = pygame.time.Clock()
         self._fps = 60
         self._playtime = 0.0
@@ -84,5 +85,8 @@ class GameTemplate(object):
 
     def draw_text(self, text):
         """Center text in window"""
-        surface = self.font.render(text, True, (0, 0, 0))
-        self._screen.blit(surface, (25, 25))
+        surface = self.font.render(text, True, (255, 255, 0))
+        screentext = self.font.render(text, True, (255, 255, 0))
+        # self._screen.blit(surface, (0, 0))
+        self._screenText.blit(screentext, (500, 500))
+        

@@ -10,7 +10,6 @@ def main():
     aa = Agent(Vector2(250, 250), 125)
     game.addtobatch(aa)
     game.run()
-    
 
 if __name__ == "__main__":
     main()

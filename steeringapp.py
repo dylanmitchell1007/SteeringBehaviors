@@ -8,7 +8,7 @@ from gametemplate import GameTemplate
 
 
 class SteeringApp(GameTemplate):
-    
+
     '''need documentation'''
 
     def __init__(self, name):
@@ -16,8 +16,10 @@ class SteeringApp(GameTemplate):
         super(SteeringApp, self).__init__()
         self._name = name
         self._gameobjects = []
-        self.targetagent = Agent(Vector2(0,0), 0 )
+        self.targetagent = Agent(Vector2(0, 0), 0)
         self._func = None
+        self._agentmode = 0
+        self.helpbar = pygame.font.Font(None, 44)
 
     def addtobatch(self, gameobject):
         '''need documentation'''
@@ -26,53 +28,62 @@ class SteeringApp(GameTemplate):
     def update(self):
         '''need documentation'''
         if not super(SteeringApp, self)._update():
-            return False 
+            return False
         for gameobject in self._gameobjects:
             gameobject.update(self._deltatime, self.targetagent)
         return True
 
     def draw(self):
         '''draw all gameobjects added to this game'''
-        self._background.fill((255, 255, 255))
+        self._background.fill((0, 0, 0))
+        # self.draw_text("I = Idle, F = Flee, W = Wander, S = Seek")
+
+        letmesee = self.helpbar.render(
+            "I = Idle  |  F = Flee  |  W = Wander  |  S = Seek  |  Esc = Exit", 0, (0, 255, 0))
+        self._screen.blit(letmesee, (0, 0))
+
+        
+        if self._agentmode is 1:
+            super(SteeringApp, self).draw_text("S = Seek (Selected)")
+        if self._agentmode is 2:
+            super(SteeringApp, self).draw_text("F = Flee (Selected)")
+        if self._agentmode is 3:
+            super(SteeringApp, self).draw_text("W = Wander (Selected)")
+        if self._agentmode is 0:
+            super(SteeringApp, self).draw_text("I = Idle (Selected)")
+        if self._agentmode is 4:
+            super(SteeringApp, self).draw_text("Agent Spawned!")
+        for gameobject in self._gameobjects:
+            gameobject.draw(self._screen)
 
         super(SteeringApp, self)._draw()
-        for gameobject in self._gameobjects:
-            if gameobject._choice_ is 1:
-                super(SteeringApp, self).draw_text("s = Seek \n")
 
-            if gameobject._choice_ is 2:
-                super(SteeringApp, self).draw_text("F = Flee \n")
-
-            if gameobject._choice_ is 3:
-                super(SteeringApp, self).draw_text("w = Wander \n")
-            pygame.draw.circle(self._screen, constants.BLACK, [int(gameobject.position.GetX()), int(gameobject.position.GetY())], 40)
     def run(self):
         '''need documentation'''
+
         if super(SteeringApp, self)._startup():
             while self.update():
                 for event in self._events:
                     if event.type == pygame.KEYDOWN:
                         if pygame.key.get_pressed()[pygame.K_s]:
-                            for gameobject in self._gameobjects:
-                                gameobject._choice_ = 1
-                            print "S KEY PRESSED"
+                            self._agentmode = 1
                             self.draw_text("SEEKING")
                         if pygame.key.get_pressed()[pygame.K_w]:
-                            for gameobject in self._gameobjects:
-                                gameobject._choice_ = 3
-                                print "W KEY PRESSED"
-                                self.draw_text("WANDERING")
+                            self._agentmode = 3
+                            self.draw_text("WANDERING")
                         if pygame.key.get_pressed()[pygame.K_f]:
-                            for gameobject in self._gameobjects:
-                                gameobject._choice_ = 2
-                            print "F KEY PRESSED"
+                            self._agentmode = 2
                             self.draw_text("FLEEING")
                         if pygame.key.get_pressed()[pygame.K_i]:
-                            for gameobject in self._gameobjects:
-                                gameobject._choice_ = 0
-                            print "S KEY PRESSED"
+                            self._agentmode = 0
+                        if pygame.key.get_pressed()[pygame.K_t]:
+                            self._agentmode = 3
                         if pygame.key.get_pressed()[pygame.K_SPACE]:
-                            self.addtobatch(Agent(Vector2(0,0), 100))
-                self.targetagent.position = Vector2(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+                            self.addtobatch(Agent(Vector2(500, 500), 100))
+
+                for gameobject in self._gameobjects:
+                    gameobject._choice_ = self._agentmode
+                self.targetagent.position = Vector2(
+                    pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                 self.draw()
         super(SteeringApp, self)._shutdown()
